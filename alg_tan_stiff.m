@@ -1,0 +1,53 @@
+function Dats = alg_tan_stiff(sigma,dlambda,ep_eff,Dstar,mp)
+
+A  = mp(4);
+B = mp(5);
+
+%Correct
+I1    = stress_invariant_I1(sigma);
+%Correct
+J2    = stress_invariant_J2(sigma);
+
+%Correct
+sigkk = sigma(1)+sigma(2)+sigma(3);
+epskk = [sigkk,sigkk,sigkk,0]';
+s     = sigma-(1/3)*epskk;
+
+%Correct
+dfdK  = I1;
+
+dfds  = 3*s/(2*sqrt(3*J2)) + alpha_fun(ep_eff,mp)*[1,1,1,0]';
+
+df2dsdK = [1,1,1,0];
+df2ds2 = [1,1,1,1];
+
+dKdk  = A/3*((2*dlambda+1)*(10^(-4)+dlambda^2)-(B*dlambda^2+dlambda)*2*dlambda)/(10^(-4)+dlambda^2)^2;
+
+% ij =1 ger 11, =2 ger 22, =3 ger 22, =4 ger 12
+for ij = 1:4
+    for lk = 1:4
+        if ij == 1 || ij ==2 || ij ==3
+            i= ij;
+            j= ij;
+        end
+        if ij == 4
+            i = 1;
+            j = 2;
+        end
+        if lk == 1 || lk ==2 || lk ==3
+            l = lk;
+            k = lk;
+        end
+        if lk == 4
+            l = 1;
+            k = 2;
+        end
+        df2ds2(ij,lk) = (1/(12*J2))*(6*sqrt(3*J2)*(0.5*(delta(i,l)*delta(i,k) + ...
+            delta(i,k)*delta(j,l))-1/3*delta(i,j)*delta(l,k))- 9 * s(ij)*s(lk)/sqrt(3*J2));
+    end
+end
+
+
+Dats  = inv(inv(Dstar) + dlambda.*df2ds2 - (dfds'.\dfdK)*dfds./dKdk - dlambda.*df2dsdK.*dfds./dKdk);
+end
+
