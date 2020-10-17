@@ -14,8 +14,12 @@ sigkktrial     = sigtrial(1)+sigtrial(2)+sigtrial(3);
 sigkktrialvec  = [sigkktrial,sigkktrial,sigkktrial,0]';
 I1trial        = stress_invariant_I1(sigtrial);
 J2trial        = stress_invariant_J2(sigtrial);
+strial  = sigtrial - 1/3*sigkktrialvec;
+s_2 = @(dl) sigtrial - 3*dl*G*sigtrial/sqrt(3*J2trial);
+s_2(0)
+% J2_2 = @(dl) 0.5*(s_2(dl)(1).^2 + s_2(2).^2 + s_2(3).^2 + 2*s_2(4)^2);
+% I1_2 = @(dl) I1trial - 9*K*dl * alpha_fun(ep_eff_old+dl,mp);
 
-strial         = sigtrial - 1/3* sigkktrialvec;
 
 
 
@@ -60,6 +64,8 @@ else
     %dlambda = fzero(f_tr,1e-6)
     %ep_eff = ep_eff_old + dlambda
     
+%     f_tr = @(dl) sqrt(3*J2_2(dl)) + alpha_fun(ep_eff_old+dl,mp)*I1_2(dl); 
+%     dlambda  = fzero(f_tr, 1e-3)
     dlambda = 1.0067e-4;
     ep_eff  = ep_eff_old + dlambda;
     
@@ -67,7 +73,7 @@ else
     
     term = (1/3)*(I1trial-9*K*dlambda*alpha);
     termv= [term,term,term,0]';
-    sigma  = strial-3*G*dlambda*strial/sqrt(3*J2trial)+ termv
+    sigma  = strial-3*G*dlambda*strial/sqrt(3*J2trial)+ termv;
 
 end
 
