@@ -24,6 +24,7 @@ if f < 0
 else
     f_tr = @(dl) sqrt(3*J2trial) + 1/3*(A*(B*(ep_eff_old+dl).^2 + ep_eff_old + dl)/(1e-4+(ep_eff_old+dl).^2) + tan(gamma))*I1trial;
     delta_lambda = fzero(f_tr,0);
+    
     strial = sold + Dstar*delta_eps-1/3*Dstar*(delta_eps(1)+delta_eps(2))*[1,1,1,0];
     sigma = strial-3G*dlambda*strial/sqrt(3*J2trial)+ (1/3)*(I1trial-9K*dlambda*alpha)*sigma_old    
 end
