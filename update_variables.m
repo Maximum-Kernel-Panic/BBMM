@@ -67,7 +67,7 @@ else
     
     term = (1/3)*(I1trial-9*K*dlambda*alpha);
     termv= [term,term,term,0]';
-    sigma  = strial-3*G*dlambda*strial/sqrt(3*J2trial)+ termv
+    sigma  = strial-3*G*dlambda*strial/sqrt(3*J2trial)+ termv;
 
 end
 
