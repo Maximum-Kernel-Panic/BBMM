@@ -1,4 +1,9 @@
 function [sigma,dlambda,ep_eff] = update_variables(sigma_old,ep_eff_old,delta_eps,Dstar,mp)
+e1 = [1 0 0 0];
+e2 = [0 1 0 0];
+e3 = [0 0 1 0];
+e4 = [0 0 0 1];
+
 
 G = mp(1);
 
@@ -15,10 +20,9 @@ sigkktrialvec  = [sigkktrial,sigkktrial,sigkktrial,0]';
 I1trial        = stress_invariant_I1(sigtrial);
 J2trial        = stress_invariant_J2(sigtrial);
 strial  = sigtrial - 1/3*sigkktrialvec;
-s_2 = @(dl) sigtrial - 3*dl*G*sigtrial/sqrt(3*J2trial);
-s_2(0)
-% J2_2 = @(dl) 0.5*(s_2(dl)(1).^2 + s_2(2).^2 + s_2(3).^2 + 2*s_2(4)^2);
-% I1_2 = @(dl) I1trial - 9*K*dl * alpha_fun(ep_eff_old+dl,mp);
+s_2 = @(dl) strial - 3.*dl*G*sigtrial/sqrt(3*J2trial);
+J2_2 = @(dl) 0.5*((e1*s_2(dl))^2 + (e2*s_2(dl))^2 + (e3*s_2(dl))^2 + 2*(e4*s_2(dl))^2);
+I1_2 = @(dl) I1trial - 9*K.*dl * alpha_fun(ep_eff_old+dl,mp);
 
 
 
@@ -64,9 +68,17 @@ else
     %dlambda = fzero(f_tr,1e-6)
     %ep_eff = ep_eff_old + dlambda
     
-%     f_tr = @(dl) sqrt(3*J2_2(dl)) + alpha_fun(ep_eff_old+dl,mp)*I1_2(dl); 
-%     dlambda  = fzero(f_tr, 1e-3)
-    dlambda = 1.0067e-4;
+    
+    f_tr = @(dl) sqrt(3*J2_2(dl)) + alpha_fun(ep_eff_old+dl,mp)*I1_2(dl); 
+    dlambda  = fzero(f_tr, 1e-4)
+    x = linspace(-0.5, 0.5, 1000);
+    f_tr_val = zeros(1000);
+    for i = 1:1000
+        f_tr_val(i) = f_tr(i);
+    end
+
+    plot(x,f_tr_val);
+%     dlambda = 1.0067e-4;
     ep_eff  = ep_eff_old + dlambda;
     
     alpha   = alpha_fun(ep_eff,mp);
