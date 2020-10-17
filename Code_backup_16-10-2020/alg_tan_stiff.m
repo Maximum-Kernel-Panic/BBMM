@@ -48,6 +48,12 @@ for ij = 1:4
     end
 end
 
-D   = inv(inv(Dstar) - (dfds'/dfdK)*dfds/dKdk + dlambda*(df2ds2-df2dsdK'*dfds/dfdK));
+
+% dlambda*df2dsdK*dfds'/dKdk
+% dfds
+% df2dsdK
+
+% D  = inv(Dstar) + dlambda*df2ds2 - (dfds'/dfdK)*dfds/dKdk - dlambda*df2dsdK'*dfds/dKdk;
+D   = inv(inv(Dstar) - (dfds'/dfdK)*dfds/dKdk + dlambda*(df2ds2-df2dsdK'*dfds/dfdK))
 end
 
