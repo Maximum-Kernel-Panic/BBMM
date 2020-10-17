@@ -1,10 +1,12 @@
 function f = yield(sigma, ep_eff, mp)
 
-G = mp(1);
-nu= mp(2);
+
+G     = mp(1);
+nu    = mp(2);
 gamma = mp(3);
-A  = mp(4);
-B = mp(5);
+A     = mp(4);
+B     = mp(5);
+
 
 
 I1      = stress_invariant_I1(sigma);
