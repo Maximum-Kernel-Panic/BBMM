@@ -1,12 +1,10 @@
 function [sigma,dlambda,ep_eff] = update_variables(sigma_old,ep_eff_old,delta_eps,Dstar,mp)
 
 G = mp(1);
-nu= mp(2);
+v= mp(2);
 gamma = mp(3)*pi/180;
 A  = mp(4);
 B = mp(5);
-
-v= mp(2);
 
 K  = 2*(1+v)/(3*(1-2*v))*G;
 
@@ -37,8 +35,8 @@ else
     alph = @(dl) (1/3)*(A*(B*(ep_eff_old+dl).^2 + ep_eff_old + dl)./(10^(-4)+(ep_eff_old+dl).^2)+ tan(gamma));
     f_tr = @(dl) sqrt(3*J2) + alph(dl)*I1;
     dlambda = fzero(f_tr,1e-4)
-%     x = linspace(-0.5, 0.5, 1000);
-%     f_tr_val = f_tr(x);
+%    x = linspace(-0.5, 0.5, 1000);
+%    f_tr_val = f_tr(x);
     ep_eff  = ep_eff_old + dlambda;
     
     alpha   = alpha_fun(ep_eff,mp);
