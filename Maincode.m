@@ -37,22 +37,22 @@ unload    = false;
 
 % D) Define various iteration quanteties
 %Allocatin memory
-a         = zeros(length(dof),1);               %Displacement vector
-K         = zeros(length(dof),1);                 %Stiffness matrix
-f         = zeros(length(dof),1);               %External force vector
-f_int     = zeros(length(dof),1);               %Internal force vector
+K         = zeros(2*length(dof));                 %Stiffness matrix
+f_int     = zeros(2*length(dof),1);               %Internal force vector
 %eps_his   = zeros(nbr_elem,3*NbrSteps);     %Strain history
 eps       = zeros(length(enod),3);           %Current strain
 
 % E) Build initial tangent and internal force
 
-% for i=1:length(enod)
-%     %Element coordinates
-%     ex = coord(enod(i,:),1)'; 
-%     ey = coord(enod(i,:),2)';
-%     
-%     % Insert my elastic D, create function
-%     Ke = plante(ex,ey,ep,Dt);
-%     indx = edof(i,2:end);
-%     K(indx,indx) = K(indx,indx)+Ke;
-% end
+Dstar  = elastic_tan_stiff(mp);
+
+for i=1:length(enod)
+    %Element coordinates
+    ex = coord(enod(i,:),1)'; 
+    ey = coord(enod(i,:),2)';
+    
+    % Insert elastic D, create function
+    Ke = plante(ex,ey,ep,Dstar);
+    indx = edof(i,2:end);
+    K(indx,indx) = K(indx,indx)+Ke;
+end
