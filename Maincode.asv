@@ -39,15 +39,10 @@ unload    = false;
 %Allocatin memory
 K         = zeros(2*length(dof));                 %Stiffness matrix
 f_int     = zeros(2*length(dof),1);               %Internal force vector
-<<<<<<< HEAD
-%eps_his   = zeros(nbr_elem,3*NbrSteps);     %Strain history
+eps_his   = zeros(2*length(dof),3);     %Strain history
 eps       = zeros(length(enod),3);           %Current strain
-=======
-eps_his   = zeros(2*length(dof),4);     %Strain history
-eps       = zeros(length(enod),4);           %Current strain
 sigma_old = zeros(length(enod),4);
 sigma     = zeros(length(enod),4);
->>>>>>> 57c2b0a25a32711a0397e78c0724379b27542120
 
 
 ep_eff_old = 0;
@@ -102,7 +97,8 @@ for load_step=1:NbrSteps
             % Update strains
             [~,eps_e] = plants(ex, ey, ep, Dats, ed(el,:));
             eps(el,:) = eps_e;
-            delta_eps = eps(el,:) - epshistory(el,:);
+            delta_eps = eps_e - epshistory(el,:);
+            yield(sigma, ep_eff, mp)
             
             % L) Update plastic variables, (check for plasticity)
             [sigma,dlambda,ep_eff] = ...
@@ -129,4 +125,6 @@ for load_step=1:NbrSteps
     
     % Q) Accept and save quantities as an equilibrium state
     
+    
+
 end
