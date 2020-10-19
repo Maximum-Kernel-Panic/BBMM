@@ -14,7 +14,7 @@ epskk = [sigkk,sigkk,sigkk,0]';
 s     = sigma-(1/3)*epskk;
 
 %Correct
-dfdK  = I1;
+dfdK    = I1;
 %dfds is now correct. Write in report why 2*
 dfdsii  = (3*s/(2*sqrt(3*J2)) + alpha_fun(ep_eff,mp)*[1,1,1,0]');
 dfds    = [dfdsii(1),dfdsii(2),dfdsii(3),2*dfdsii(4)];

@@ -1,5 +1,6 @@
 % A) Define material and model parameters
-
+clear all
+clc
 %Model
 R0     = 8;   %Radius, 8m
 w      = 42;  %Distance from wall to drill
@@ -43,7 +44,6 @@ eps_his   = zeros(2*length(dof),4);     %Strain history
 eps       = zeros(length(enod),4);           %Current strain
 sigma_old = zeros(length(enod),4);
 sigma     = zeros(length(enod),4);
-
 
 
 ep_eff_old = 0;
@@ -125,4 +125,6 @@ for load_step=1:NbrSteps
     
     % Q) Accept and save quantities as an equilibrium state
     
+    
+
 end
