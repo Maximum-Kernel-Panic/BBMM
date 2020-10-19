@@ -1,5 +1,6 @@
 % A) Define material and model parameters
-
+clear all
+clc
 %Model
 R0     = 8;   %Radius, 8m
 w      = 42;  %Distance from wall to drill
@@ -39,8 +40,8 @@ unload    = false;
 %Allocatin memory
 K         = zeros(2*length(dof));                 %Stiffness matrix
 f_int     = zeros(2*length(dof),1);               %Internal force vector
-eps_his   = zeros(2*length(dof),3);     %Strain history
-eps       = zeros(length(enod),3);           %Current strain
+eps_his   = zeros(2*length(dof),4);     %Strain history
+eps       = zeros(length(enod),4);           %Current strain
 sigma_old = zeros(length(enod),4);
 sigma     = zeros(length(enod),4);
 
@@ -97,12 +98,11 @@ for load_step=1:NbrSteps
             % Update strains
             [~,eps_e] = plants(ex, ey, ep, Dats, ed(el,:));
             eps(el,:) = eps_e;
-            delta_eps = eps_e - epshistory(el,:);
-            yield(sigma, ep_eff, mp)
+            delta_eps = eps(el,:) - epshistory(el,:);
             
             % L) Update plastic variables, (check for plasticity)
             [sigma,dlambda,ep_eff] = ...
-            update_variables(sigma_old(el,:)',ep_eff_old,delta_eps(el,:)',Dstar,mp);
+            update_variables(sigma_old(el,:)',ep_eff_old,delta_eps',Dstar,mp);
             
             % M) Compute element algorithmic tangent, D_ats
             Dats = alg_tan_stiff(sigma,dlambda,ep_eff,Dstar,mp);

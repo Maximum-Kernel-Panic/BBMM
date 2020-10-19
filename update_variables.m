@@ -11,7 +11,7 @@ v= mp(2);
 K  = 2*(1+v)/(3*(1-2*v))*G;
 
 
-sigtrial       = sigma_old + Dstar*delta_eps
+sigtrial       = sigma_old + Dstar*delta_eps;
 sigkktrial     = sigtrial(1)+sigtrial(2)+sigtrial(3);
 sigkktrialvec  = [sigkktrial,sigkktrial,sigkktrial,0]';
 I1trial        = stress_invariant_I1(sigtrial);
@@ -35,11 +35,9 @@ else
     
     term = (1/3)*(I1trial-9*K*dlambda*alpha);
     termv= [term,term,term,0]';
-<<<<<<< HEAD
+    
     sigma  = strial - 3*G*dlambda*strial/sqrt(3*J2trial) + termv;
-=======
-    sigma  = strial-3*G*dlambda*strial/sqrt(3*J2trial)+ termv
->>>>>>> parent of 121e3e8... l
+
 
 end
 
