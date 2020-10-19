@@ -39,15 +39,11 @@ unload    = false;
 %Allocatin memory
 K         = zeros(2*length(dof));                 %Stiffness matrix
 f_int     = zeros(2*length(dof),1);               %Internal force vector
-<<<<<<< HEAD
-%eps_his   = zeros(nbr_elem,3*NbrSteps);     %Strain history
-eps       = zeros(length(enod),3);           %Current strain
-=======
 eps_his   = zeros(2*length(dof),4);     %Strain history
 eps       = zeros(length(enod),4);           %Current strain
 sigma_old = zeros(length(enod),4);
 sigma     = zeros(length(enod),4);
->>>>>>> 57c2b0a25a32711a0397e78c0724379b27542120
+
 
 
 ep_eff_old = 0;
