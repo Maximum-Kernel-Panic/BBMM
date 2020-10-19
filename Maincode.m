@@ -1,5 +1,6 @@
 % A) Define material and model parameters
-
+clear all
+clc
 %Model
 R0     = 8;   %Radius, 8m
 w      = 42;  %Distance from wall to drill
@@ -8,7 +9,7 @@ t      = 1;   %Thickness
 ptype  = 2;   % planes strain = 2 (plan stress = 1)
 ep     = [ptype t];
 %Material
-G      = 300; %Young modulus, GPa
+G      = 3e8; %Young modulus, GPa
 nu     = 0.3; %Poisson ratio
 gamma  = 30*pi/180;  %How to intrepet? Which angle? Need to change to radians
 A      = 0.0067;

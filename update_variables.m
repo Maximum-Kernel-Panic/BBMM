@@ -23,8 +23,10 @@ I1_2 = @(dl) I1trial - 9*K.*dl * alpha_fun(ep_eff_old+dl,mp);
 
 f = yield(sigtrial,ep_eff_old,mp);
 
-if f < 0
+if f <= 0
     sigma = sigma_old + Dstar*delta_eps;
+    dlambda = 0;
+    ep_eff = ep_eff_old;
 else
 
     f_tr = @(dl) sqrt(3*J2_2(dl)) + alpha_fun(ep_eff_old+dl,mp)*I1_2(dl); 
