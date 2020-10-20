@@ -50,6 +50,7 @@ f_int     = zeros(2*length(dof),1);               %Internal force vector
 eps_his   = zeros(2*length(dof),4);     %Strain history
 eps       = zeros(length(enod),4);           %Current strain
 sigma_old = zeros(4,length(enod));
+plasticitycheck = zeros(1,length(enod));
 %sigma     = zeros(length(enod),4);
 
 
@@ -129,6 +130,11 @@ while current_load_percent > End_load_percent
             [sigma,dlambda,ep_eff] = ...
             update_variables(sigma_old(:,el),ep_eff_old,delta_eps',Dstar,mp);
             sigma_old(:,el) = sigma;
+            
+            if dlambda ~= 0
+                plasticitycheck(el) = 1;
+            end
+            
             % M) Compute element algorithmic tangent, D_ats           
             Dats = alg_tan_stiff(sigma,dlambda,ep_eff,Dstar,mp);
             
@@ -216,6 +222,32 @@ eff_field = extract(enodtemp,eff_node(:));
 fill(ex', ey', eff_field');
 title('Volumetric stress field [N/m^2]')
 colorbar;
+
+%% Plot plasticity check
+
+figure('Renderer', 'painters', 'Position', [400 100 800 600])
+[ex,ey] = coordxtr(edof,coord,dof,3);
+ex1=[];
+ex2=[];
+ey1=[];
+ey2=[];
+for el=1:length(enod)
+    if plasticitycheck(el) == 1
+        ex1 = [ex1; ex(el,:)];
+        ey1 = [ey1; ey(el,:)];
+    else
+        ex2 = [ex2; ex(el,:)];
+        ey2 = [ey2; ey(el,:)];
+    end
+end
+
+eldraw2(ex1,ey1,[1 2 0]); %green
+
+eldraw2(ex2,ey2,[1 4 0]); %red
+
+%legend('Reference configuration');
+%axis equal
+%title('Displacement field (m), disp controlled')
 
 %%
 
