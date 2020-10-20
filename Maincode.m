@@ -1,6 +1,7 @@
 % A) Define material and model parameters
 clear all
 clc
+
 %Model
 R0     = 8;   %Radius, 8m
 w      = 42;  %Distance from wall to drill
@@ -8,6 +9,7 @@ h      = 42;  %Distance from roof to drill
 t      = 1;   %Thickness 
 ptype  = 2;   % planes strain = 2 (plan stress = 1)
 ep     = [ptype t];
+
 %Material
 G      = 3e8; %Young modulus, GPa
 nu     = 0.3; %Poisson ratio
@@ -33,7 +35,11 @@ load initial_state.mat
 
 % C) Define unloading parameters
 tol       = 1e-3;
+<<<<<<< HEAD
+NbrSteps  = 30; %Number of steps
+=======
 NbrSteps  = 75; %Number of steps
+>>>>>>> 2aa4ad7cdb6b3b39323ed753784e5f8ad9f4267e
 unload    = false;
 
 % D) Define various iteration quanteties
@@ -68,6 +74,7 @@ f_int = f;
 %% F) Unloading loop (force controlled)
 
 Dats = Dstar;
+
 for load_step=1:NbrSteps
 
     disp(' ')
@@ -130,5 +137,46 @@ for load_step=1:NbrSteps
     end
     
     % Q) Accept and save quantities as an equilibrium state
-    
 end
+
+%% ------------------ PLOT -------------------------------------------------
+    
+%
+figure('Renderer', 'painters', 'Position', [400 100 800 600])
+[ex,ey] = coordxtr(edof,coord,dof,3);
+eldraw2(ex,ey,[1 2 0]); %green
+%eldraw2(ex,-ey,[1 2 0]);
+% eldraw2(-ex+0.29,ey, [1 2 0]);
+% eldraw2(-ex+0.29,-ey, [1 2 0]);
+
+eldisp2(ex,ey,ed,[1 4 0], 1); %red
+% eldisp2(ex,-ey,ed,[1 4 0], 1); %red
+% eldisp2(-ex+0.29,ey,-ed,[1 4 0], 1); %red
+% eldisp2(-ex+0.29,-ey,-ed,[1 4 0], 1); %red
+legend('Reference configuration');
+axis equal
+title('Displacement field (m), disp controlled')
+
+%%
+
+
+
+    % Note that some aditional information from the simulation need be
+    % extracted and saved during the unloading loop to be able to create
+    % all of these plots.
+    
+    % 1) Plot percentual radius decrease to wall pressure
+
+    % 2) Plot load path of element closest to cone tip
+
+    % 3) Plot tanB vs plastic effective strain of element closest to cone tip
+
+    % 4) Plot Original and deformed mesh
+
+    % 5) Plot von Mises effective stress in the body
+
+    % 6) Plot I_1 stress in the body
+
+    % 7) Plot plastic elements
+end
+
