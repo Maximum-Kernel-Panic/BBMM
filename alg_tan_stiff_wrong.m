@@ -1,0 +1,54 @@
+function D = alg_tan_stiff_wrong(sigma,dlambda,ep_eff,Dstar,mp)
+
+A  = mp(4);
+B  = mp(5);
+
+%Correct
+I1    = stress_invariant_I1(sigma);
+%Correct
+J2    = stress_invariant_J2(sigma);
+
+%Correct
+sigkk = sigma(1)+sigma(2)+sigma(3);
+epskk = [sigkk,sigkk,sigkk,0]';
+s     = sigma-(1/3)*epskk;
+
+%Correct
+dfdK    = I1;
+%dfds is now correct. Write in report why 2*. Couldt it lead to wrong that
+%we have 2 times it?
+dfdsii  = (3*s/(2*sqrt(3*J2)) + alpha_fun(ep_eff,mp)*[1,1,1,0]');
+dfds    = [dfdsii(1),dfdsii(2),dfdsii(3),2*dfdsii(4)];
+
+df2dsdK = [1,1,1,0];
+
+dKdk  = A/(3*(10^(-4)+dlambda^2)^2)*(-dlambda^2+2*10^(-4)*B*dlambda+10^(-4));
+
+% ij =1 ger 11, =2 ger 22, =3 ger 22, =4 ger 12
+for ij = 1:4
+    for lk = 1:4
+        if ij == 1 || ij ==2 || ij ==3
+            i= ij;
+            j= ij;
+        end
+        if ij == 4
+            i = 1;
+            j = 2;
+        end
+        if lk == 1 || lk ==2 || lk ==3
+            l = lk;
+            k = lk;
+        end
+        if lk == 4
+            l = 1;
+            k = 2;
+        end
+        df2ds2(ij,lk) = (2-delta(l,k))/(4*J2)*((delta(i,l)*delta(j,k)+delta(i,k)*delta(j,l)- ... 
+            2/3*delta(i,j)*delta(l,k))*sqrt(3*J2)+3*(2-delta(i,j))*s(lk)*s(ij)/sqrt(3*J2));
+            
+    end
+end
+
+D   = inv(inv(Dstar) - (dfds'/dfdK)*dfds/dKdk + dlambda*(df2ds2-df2dsdK'*dfds/dfdK));
+end
+
