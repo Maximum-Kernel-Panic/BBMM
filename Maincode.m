@@ -84,11 +84,13 @@ for load_step=1:NbrSteps
         disp(['Residual: ', num2str(load_step)])
         
         % I) Solve for displacement increment and update
-        da = solveq( K, f-f_int, bc );
+        da = solveq(K, f-f_int, bc );
         a  = a+da;
         epshistory = eps;
         ed = extract(edof,a);
         % J) Update tangent and internal force
+        K       = zeros(2*length(dof));           %Reset stiffness matrix
+        f_int   = zeros(2*length(dof),1);     %Reset internal force vector
         for el=1:length(enod)
             
             % K) Compute current total strain and strain increment
@@ -109,10 +111,14 @@ for load_step=1:NbrSteps
             
             
             % M) Compute element algorithmic tangent, D_ats
-%             Dats = alg_tan_stiff(sigma,dlambda,ep_eff,Dstar,mp);
-            Dats = Dstar;
+
+            if dlambda == 0
+               Dats  = Dstar;
+            else
+                Dats = alg_tan_stiff(sigma,dlambda,ep_eff,Dstar,mp);
+            end
             
-            % N) Compute element internal forces and stiffness matrix
+           % N) Compute element internal forces and stiffness matrix
             Ke      = plante(ex,ey,ep,Dats);
             f_int_e = plantf(ex, ey, ep, sigma');
             
