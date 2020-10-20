@@ -1,4 +1,4 @@
-function D = alg_tan_stiff(sigma,dlambda,ep_eff,Dstar,mp)
+function Dats = alg_tan_stiff(sigma,dlambda,ep_eff,Dstar,mp)
 
 A  = mp(4);
 B  = mp(5);
@@ -66,6 +66,10 @@ Davec   = inv(inv(Dstar) + dlambda*df2ds2);
 dgdsiga = dfds  + dlambda*df2dsdK*Da;
 H       = -dfdK*Da;
 Aa      = dfds'*Davec*dfds+H;
- 
-D       = (Davec - 1/Aa*Davec*dgdsiga*dfds'*Davec);
+
+if dlambda == 0
+    Dats       = Dstar;
+else
+    Dats       = (Davec - 1/Aa*Davec*dgdsiga*dfds'*Davec);
+end
 end
