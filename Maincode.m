@@ -82,10 +82,14 @@ for load_step=1:NbrSteps
     res = f - f_int;           %check that out of balance force is zero
     res(bc(:,1)) = 0;
     res = max(abs(res));
+    iteration = 0;
+    tic
     
     % H) Newton loop
     while res>tol
-        disp(['Residual: ', num2str(res)])
+%         if mod(iteration,1) == 0
+%             disp(['Residual: ', num2str(res)])
+%         end
         
         % I) Solve for displacement increment and update
         da = solveq(K, f-f_int, bc );
@@ -130,9 +134,12 @@ for load_step=1:NbrSteps
         res = f - f_int;           %check that out of balance force is zero
         res(bc(:,1)) = 0;
         res = max(abs(res));
-        disp(['new Residual: ', num2str(res)])
+%         if mod(iteration,1) == 0
+%             disp(['new Residual: ', num2str(res)])
+%         end
+        iteration = iteration + 1;
     end
-    
+    toc
     % Q) Accept and save quantities as an equilibrium state
 end
 
