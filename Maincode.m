@@ -35,11 +35,8 @@ load initial_state.mat
 
 % C) Define unloading parameters
 tol       = 1e-3;
-<<<<<<< HEAD
-NbrSteps  = 30; %Number of steps
-=======
+
 NbrSteps  = 75; %Number of steps
->>>>>>> 2aa4ad7cdb6b3b39323ed753784e5f8ad9f4267e
 unload    = false;
 
 % D) Define various iteration quanteties
@@ -178,5 +175,5 @@ title('Displacement field (m), disp controlled')
     % 6) Plot I_1 stress in the body
 
     % 7) Plot plastic elements
-end
+% end
 
