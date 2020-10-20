@@ -121,6 +121,7 @@ for load_step=1:NbrSteps
             indx         = edof(el,2:end);
             K(indx,indx) = K(indx,indx)+Ke;
             f_int(indx)  = f_int(indx)+f_int_e;
+            sigma(indx)  = sigma(indx)+sigma;
         end
         
         % P) Update residual
