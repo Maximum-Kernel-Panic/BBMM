@@ -1,6 +1,7 @@
 % A) Define material and model parameters
 clear all
 clc
+
 %Model
 R0     = 8;   %Radius, 8m
 w      = 42;  %Distance from wall to drill
@@ -8,6 +9,7 @@ h      = 42;  %Distance from roof to drill
 t      = 1;   %Thickness 
 ptype  = 2;   % planes strain = 2 (plan stress = 1)
 ep     = [ptype t];
+
 %Material
 G      = 3e8; %Young modulus, GPa
 nu     = 0.3; %Poisson ratio
@@ -33,7 +35,7 @@ load initial_state.mat
 
 % C) Define unloading parameters
 tol       = 1e-3;
-NbrSteps  = 10; %Number of steps
+NbrSteps  = 30; %Number of steps
 unload    = false;
 
 % D) Define various iteration quanteties
@@ -67,19 +69,19 @@ f_int = f;
 %% F) Unloading loop (force controlled)
 
 Dats = Dstar;
-for load_step=1:NbrSteps
+for load_step=1:NbrSteps    
     disp(' ')
     disp(['Load step number: ', num2str(load_step)])
     
     % G) Unload and compute residual
-    f = 0.999*f;
+    f = 0.99*f;
     res = f - f_int;           %check that out of balance force is zero
     res(bc(:,1)) = 0;
     res = max(abs(res));
     
     % H) Newton loop
     while res>tol
-        disp(['Residual: ', res])
+        disp(['Residual: ', num2str(res)])
         
         % I) Solve for displacement increment and update
         da = solveq( K, f-f_int, bc );
@@ -105,7 +107,7 @@ for load_step=1:NbrSteps
             % L) Update plastic variables, (check for plasticity)
             [sigma,dlambda,ep_eff] = ...
             update_variables(sigma_old(:,el),ep_eff_old,delta_eps',Dstar,mp);
-            sigma_old(:,el) = sigma_old(:,el)+sigma;
+            sigma_old(:,el) = sigma;
             % M) Compute element algorithmic tangent, D_ats           
             Dats = alg_tan_stiff(sigma,dlambda,ep_eff,Dstar,mp);
             
@@ -124,10 +126,48 @@ for load_step=1:NbrSteps
         res = f - f_int;           %check that out of balance force is zero
         res(bc(:,1)) = 0;
         res = max(abs(res));
+        disp(['new Residual: ', num2str(res)])
     end
     
     % Q) Accept and save quantities as an equilibrium state
-    
-    
-
 end
+
+%% ------------------ PLOT -------------------------------------------------
+    
+%
+figure('Renderer', 'painters', 'Position', [400 100 800 600])
+[ex,ey] = coordxtr(edof,coord,dof,3);
+eldraw2(ex,ey,[1 2 0]); %green
+%eldraw2(ex,-ey,[1 2 0]);
+% eldraw2(-ex+0.29,ey, [1 2 0]);
+% eldraw2(-ex+0.29,-ey, [1 2 0]);
+
+eldisp2(ex,ey,ed,[1 4 0], 1); %red
+% eldisp2(ex,-ey,ed,[1 4 0], 1); %red
+% eldisp2(-ex+0.29,ey,-ed,[1 4 0], 1); %red
+% eldisp2(-ex+0.29,-ey,-ed,[1 4 0], 1); %red
+legend('Reference configuration');
+axis equal
+title('Displacement field (m), disp controlled')
+
+%%
+
+
+
+    % Note that some aditional information from the simulation need be
+    % extracted and saved during the unloading loop to be able to create
+    % all of these plots.
+    
+    % 1) Plot percentual radius decrease to wall pressure
+
+    % 2) Plot load path of element closest to cone tip
+
+    % 3) Plot tanB vs plastic effective strain of element closest to cone tip
+
+    % 4) Plot Original and deformed mesh
+
+    % 5) Plot von Mises effective stress in the body
+
+    % 6) Plot I_1 stress in the body
+
+    % 7) Plot plastic elements
