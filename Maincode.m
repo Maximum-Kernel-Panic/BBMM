@@ -42,8 +42,8 @@ K         = zeros(2*length(dof));                 %Stiffness matrix
 f_int     = zeros(2*length(dof),1);               %Internal force vector
 eps_his   = zeros(2*length(dof),4);     %Strain history
 eps       = zeros(length(enod),4);           %Current strain
-sigma_old = zeros(length(enod),4);
-sigma     = zeros(length(enod),4);
+sigma_old = zeros(4,length(enod));
+%sigma     = zeros(length(enod),4);
 
 
 ep_eff_old = 0;
@@ -79,7 +79,7 @@ for load_step=1:NbrSteps
     
     % H) Newton loop
     while res>tol
-        disp(['Residual: ', num2str(load_step)])
+        disp(['Residual: ', num2str(load_step), num2str(res)])
         
         % I) Solve for displacement increment and update
         da = solveq( K, f-f_int, bc );
@@ -104,8 +104,8 @@ for load_step=1:NbrSteps
             
             % L) Update plastic variables, (check for plasticity)
             [sigma,dlambda,ep_eff] = ...
-            update_variables(sigma_old(el,:)',ep_eff_old,delta_eps',Dstar,mp);
-            
+            update_variables(sigma_old(:,el),ep_eff_old,delta_eps',Dstar,mp);
+            sigma_old(:,el) = sigma_old(:,el)+sigma;
             % M) Compute element algorithmic tangent, D_ats           
             Dats = alg_tan_stiff(sigma,dlambda,ep_eff,Dstar,mp);
             
@@ -117,13 +117,14 @@ for load_step=1:NbrSteps
             indx         = edof(el,2:end);
             K(indx,indx) = K(indx,indx)+Ke;
             f_int(indx)  = f_int(indx)+f_int_e;
-            sigma(indx)  = sigma(indx)+sigma;
+            
         end
         
         % P) Update residual
         res = f - f_int;           %check that out of balance force is zero
         res(bc(:,1)) = 0;
         res = max(abs(res));
+        disp(['new Residual: ', num2str(load_step), num2str(res)])
     end
     
     % Q) Accept and save quantities as an equilibrium state
