@@ -36,7 +36,11 @@ load initial_state.mat
 % C) Define unloading parameters
 tol       = 1e-3;
 
-NbrSteps  = 75; %Number of steps
+Initial_load_percent = 100; %Initial load in percent of initial load
+End_load_percent  = 17; %Final load fraction of initial load
+step_size_big = 1; %Big step size in percent
+step_size_small = 0.1; %Small step size 
+break_percent = 20;
 unload    = false;
 
 % D) Define various iteration quanteties
@@ -71,21 +75,34 @@ f_int = f;
 %% F) Unloading loop (force controlled)
 
 Dats = Dstar;
+current_load_percent = Initial_load_percent;
 
-for load_step=1:NbrSteps
 
+while current_load_percent > End_load_percent
+    
+    if current_load_percent <= break_percent
+        step_size = step_size_small/100;
+    else
+        step_size = step_size_big/100;
+    end
+        
     disp(' ')
-    disp(['Load step number: ', num2str(load_step)])
+    disp(['Force %: ', num2str(current_load_percent)])
+    current_load_percent = current_load_percent - step_size*100;
     
     % G) Unload and compute residual
-    f = 0.99*f;
+    f = (1-step_size)*f;
     res = f - f_int;           %check that out of balance force is zero
     res(bc(:,1)) = 0;
     res = max(abs(res));
+    iteration = 0;
+    tic
     
     % H) Newton loop
     while res>tol
-        disp(['Residual: ', num2str(res)])
+%         if mod(iteration,1) == 0
+%             disp(['Residual: ', num2str(res)])
+%         end
         
         % I) Solve for displacement increment and update
         da = solveq(K, f-f_int, bc );
@@ -130,9 +147,12 @@ for load_step=1:NbrSteps
         res = f - f_int;           %check that out of balance force is zero
         res(bc(:,1)) = 0;
         res = max(abs(res));
-        disp(['new Residual: ', num2str(res)])
+%         if mod(iteration,1) == 0
+%             disp(['new Residual: ', num2str(res)])
+%         end
+        iteration = iteration + 1;
     end
-    
+    toc
     % Q) Accept and save quantities as an equilibrium state
 end
 
@@ -155,9 +175,41 @@ axis equal
 title('Displacement field (m), disp controlled')
 
 %% Plot von Mises
+vMises = zeros(length(enod),1);   %Von Mises stress
+for el=1:length(enod)
+    vMises(el) = stress_invariant_J2(sigma_old(:,el));
+end
+figure('Renderer', 'painters', 'Position', [400 100 800 600])
+[ex,ey] = coordxtr(edof,coord,dof,3);
+nnod = length(coord(:,1));
+eff_node = zeros(nnod,1);
+for node = 1:nnod
+    [c0,c1] = find(enod==node);
+    eff_node(node,1) = sum(vMises(c0)/size(c0,1));
+end
+enodtemp = [(1:length(enod))',enod];
+eff_field = extract(enodtemp,eff_node(:));
+fill(ex', ey', eff_field');
+title('Von Mises effective stressfield [N/m^2]')
+colorbar;
 
-
-
+%% Plot volumetric stress
+for el=1:length(enod)
+    I1plot(el) = stress_invariant_I1(sigma_old(:,el));
+end
+figure('Renderer', 'painters', 'Position', [400 100 800 600])
+[ex,ey] = coordxtr(edof,coord,dof,3);
+nnod = length(coord(:,1));
+eff_node = zeros(nnod,1);
+for node = 1:nnod
+    [c0,c1] = find(enod==node);
+    eff_node(node,1) = sum(I1plot(c0)/size(c0,1));
+end
+enodtemp = [(1:length(enod))',enod];
+eff_field = extract(enodtemp,eff_node(:));
+fill(ex', ey', eff_field');
+title('Volumetric stress field [N/m^2]')
+colorbar;
 
 %%
 

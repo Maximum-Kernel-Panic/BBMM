@@ -36,7 +36,11 @@ load initial_state.mat
 % C) Define unloading parameters
 tol       = 1e-3;
 
-NbrSteps  = 75; %Number of steps
+Initial_load_percent = 100; %Initial load in percent of initial load
+End_load_percent  = 17; %Final load fraction of initial load
+step_size_big = 1; %Big step size percentage of initial load
+step_size_small = 0.1; %Small step size percentage of inital load
+break_percent = 20; %Breakpoint percentage for big step size
 unload    = false;
 
 % D) Define various iteration quanteties
@@ -71,19 +75,28 @@ f_int = f;
 %% F) Unloading loop (force controlled)
 
 Dats = Dstar;
+current_load_percent = Initial_load_percent;
+step_nbr = 1;
 
-for load_step=1:NbrSteps
 
+while current_load_percent > End_load_percent
+    tic
+    if current_load_percent <= break_percent
+        step_size = step_size_small/100;
+    else
+        step_size = step_size_big/100;
+    end
+        
     disp(' ')
-    disp(['Load step number: ', num2str(load_step)])
+    disp(['Force %: ', num2str(current_load_percent)])
+    current_load_percent = current_load_percent - step_size*100;
     
     % G) Unload and compute residual
-    f = 0.99*f;
+    f = (1-step_size)*f;
     res = f - f_int;           %check that out of balance force is zero
     res(bc(:,1)) = 0;
     res = max(abs(res));
-    iteration = 0;
-    tic
+
     
     % H) Newton loop
     while res>tol
@@ -137,11 +150,17 @@ for load_step=1:NbrSteps
 %         if mod(iteration,1) == 0
 %             disp(['new Residual: ', num2str(res)])
 %         end
-        iteration = iteration + 1;
     end
-    toc
+    step_time(step_nbr) = toc;
+    step_nbr = step_nbr + 1;
     % Q) Accept and save quantities as an equilibrium state
 end
+
+%% ------------------Plot step time-----------------------------------------
+n = linspace(1,length(step_time),length(step_time));
+hold on;
+grid on;
+plot(n,step_time,'*')
 
 %% ------------------ PLOT -------------------------------------------------
     
