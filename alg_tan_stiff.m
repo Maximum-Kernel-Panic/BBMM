@@ -24,8 +24,7 @@ df2dsdK = [1,1,1,0]';
 
 dKdk  = A/(3*(10^(-4)+(dlambda+ep_eff)^2)^2)*(-(dlambda+ep_eff)^2+2*10^(-4)*B*(dlambda+ep_eff)+10^(-4));
 
-% ij =1 ger 11, =2 ger 22, =3 ger 22, =4 ger 12. Testa beräkna typ
-% dfdig11dsig11 på papper o se om det överenstämmer.
+
 for ij = 1:4
     for lk = 1:4
         if ij == 1 || ij ==2 || ij ==3
@@ -60,6 +59,7 @@ for ij = 1:4
         df2ds2(ij,lk)  = (3/2)/sqrt(3*J2)*(-(3/2)/(3*J2)*s(ij)*s(lk)*factor+ factor1*(delta(i,l)*delta(j,k)-1/3*delta(i,j)*delta(k,l)));
     end
 end
+
 
 Da      = dKdk;
 Davec   = inv(inv(Dstar) + dlambda*df2ds2);

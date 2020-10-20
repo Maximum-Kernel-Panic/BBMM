@@ -35,7 +35,11 @@ load initial_state.mat
 
 % C) Define unloading parameters
 tol       = 1e-3;
+<<<<<<< HEAD
 NbrSteps  = 30; %Number of steps
+=======
+NbrSteps  = 75; %Number of steps
+>>>>>>> 2aa4ad7cdb6b3b39323ed753784e5f8ad9f4267e
 unload    = false;
 
 % D) Define various iteration quanteties
@@ -46,6 +50,7 @@ eps_his   = zeros(2*length(dof),4);     %Strain history
 eps       = zeros(length(enod),4);           %Current strain
 sigma_old = zeros(4,length(enod));
 %sigma     = zeros(length(enod),4);
+
 
 
 ep_eff_old = 0;
@@ -69,7 +74,9 @@ f_int = f;
 %% F) Unloading loop (force controlled)
 
 Dats = Dstar;
-for load_step=1:NbrSteps    
+
+for load_step=1:NbrSteps
+
     disp(' ')
     disp(['Load step number: ', num2str(load_step)])
     
@@ -84,13 +91,13 @@ for load_step=1:NbrSteps
         disp(['Residual: ', num2str(res)])
         
         % I) Solve for displacement increment and update
-        da = solveq( K, f-f_int, bc );
+        da = solveq(K, f-f_int, bc );
         a  = a+da;
         epshistory = eps;
         ed = extract(edof,a);
         % J) Update tangent and internal force
-        K       = zeros(2*length(dof));           %Stiffness matrix
-        f_int   = zeros(2*length(dof),1);     %Stiffness matrix
+        K       = zeros(2*length(dof));           %Reset stiffness matrix
+        f_int   = zeros(2*length(dof),1);     %Reset internal force vector
         for el=1:length(enod)
             
             % K) Compute current total strain and strain increment
@@ -171,3 +178,5 @@ title('Displacement field (m), disp controlled')
     % 6) Plot I_1 stress in the body
 
     % 7) Plot plastic elements
+end
+
