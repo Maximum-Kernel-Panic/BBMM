@@ -170,7 +170,7 @@ plot(n,step_time,'*')
 
 %% ------------------ PLOT -------------------------------------------------
     
-%
+%Try for displacement code
 figure('Renderer', 'painters', 'Position', [400 100 800 600])
 [ex,ey] = coordxtr(edof,coord,dof,3);
 eldraw2(ex,ey,[1 2 0]); %green
@@ -186,7 +186,7 @@ legend('Reference configuration');
 axis equal
 title('Displacement field (m), disp controlled')
 
-%% Plot von Mises
+%% Plot von Mises Finished
 vMises = zeros(length(enod),1);   %Von Mises stress
 for el=1:length(enod)
     vMises(el) = stress_invariant_J2(sigma_old(:,el));
@@ -205,7 +205,7 @@ fill(ex', ey', eff_field');
 title('Von Mises effective stressfield [N/m^2]')
 colorbar;
 
-%% Plot volumetric stress
+%% Plot volumetric stress Finished
 for el=1:length(enod)
     I1plot(el) = stress_invariant_I1(sigma_old(:,el));
 end
@@ -223,7 +223,7 @@ fill(ex', ey', eff_field');
 title('Volumetric stress field [N/m^2]')
 colorbar;
 
-%% Plot plasticity check
+%% Plot plasticity check Finished
 
 figure('Renderer', 'painters', 'Position', [400 100 800 600])
 [ex,ey] = coordxtr(edof,coord,dof,3);
