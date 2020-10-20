@@ -23,6 +23,8 @@ df2dsdK = [1,1,1,0];
 
 dKdk  = A/(3*(10^(-4)+dlambda^2)^2)*(-dlambda^2+2*10^(-4)*B*dlambda+10^(-4));
 
+
+
 % ij =1 ger 11, =2 ger 22, =3 ger 22, =4 ger 12
 for ij = 1:4
     for lk = 1:4
@@ -47,7 +49,11 @@ for ij = 1:4
             
     end
 end
-
+df2ds2
+yield(sigma,ep_eff,mp)
+% dKdk
+% (dfds'/dfdK)*dfds/dKdk 
+% dlambda*(df2ds2-df2dsdK'*dfds/dfdK)
 D   = inv(inv(Dstar) - (dfds'/dfdK)*dfds/dKdk + dlambda*(df2ds2-df2dsdK'*dfds/dfdK));
 end
 

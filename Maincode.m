@@ -69,6 +69,7 @@ f_int = f;
 
 Dats = Dstar;
 for load_step=1:NbrSteps
+    
     disp(' ')
     disp(['Load step number: ', num2str(load_step)])
     
@@ -103,10 +104,13 @@ for load_step=1:NbrSteps
             
             % L) Update plastic variables, (check for plasticity)
             [sigma,dlambda,ep_eff] = ...
-            update_variables(sigma_old(el,:)',ep_eff_old,delta_eps',Dstar,mp);
+            update_variables_elastic(sigma_old(el,:)',ep_eff_old,delta_eps',Dstar,mp);
+%             update_variables(sigma_old(el,:)',ep_eff_old,delta_eps',Dstar,mp);
+            
             
             % M) Compute element algorithmic tangent, D_ats
-            Dats = alg_tan_stiff(sigma,dlambda,ep_eff,Dstar,mp);
+%             Dats = alg_tan_stiff(sigma,dlambda,ep_eff,Dstar,mp);
+            Dats = Dstar;
             
             % N) Compute element internal forces and stiffness matrix
             Ke      = plante(ex,ey,ep,Dats);
