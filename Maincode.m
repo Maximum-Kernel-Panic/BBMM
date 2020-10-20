@@ -87,6 +87,8 @@ for load_step=1:NbrSteps
         epshistory = eps;
         ed = extract(edof,a);
         % J) Update tangent and internal force
+        K       = zeros(2*length(dof));           %Stiffness matrix
+        f_int   = zeros(2*length(dof),1);     %Stiffness matrix
         for el=1:length(enod)
             
             % K) Compute current total strain and strain increment
@@ -105,8 +107,11 @@ for load_step=1:NbrSteps
             update_variables(sigma_old(el,:)',ep_eff_old,delta_eps',Dstar,mp);
             
             % M) Compute element algorithmic tangent, D_ats
-            Dats = alg_tan_stiff(sigma,dlambda,ep_eff,Dstar,mp);
-            
+            if dlambda == 0
+               Dats  = Dstar;
+            else
+                Dats = alg_tan_stiff(sigma,dlambda,ep_eff,Dstar,mp);
+            end
             % N) Compute element internal forces and stiffness matrix
             Ke      = plante(ex,ey,ep,Dats);
             f_int_e = plantf(ex, ey, ep, sigma');
