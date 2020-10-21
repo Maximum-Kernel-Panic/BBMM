@@ -297,7 +297,7 @@ eldraw2(ex2,ey2,[1 4 0]); %red
 I1_vec = zeros(length(max_element_stress),1);
 J2_vec = zeros(length(max_element_stress),1);
 alpha_vec = zeros(length(max_element_stress),1);
-x = linspace(-3.2e7,-2.9e7,1000);
+x = linspace(-3.5e7,0,1000);
 
 
 for step=1:length(max_element_stress)
@@ -306,19 +306,9 @@ for step=1:length(max_element_stress)
     alpha_vec(step) = alpha_fun(max_element_ep_eff(step),mp);
 end
 
-alpha_init = alpha_vec(1);
-alpha_max = max(alpha_vec);
-alpha_end_index = find(J2_vec);
-alpha_end_index = alpha_end_index(end);
-alpha_end = alpha_vec(alpha_end_index);
-
-alpha_line_init = -alpha_init.*x;
-alpha_line_max = -alpha_max.*x;
 hold on;
 grid on;
-plot(I1_vec(1:75),sqrt(3.*J2_vec(1:75)),'.');
-plot(x,alpha_line_init);
-plot(x,alpha_line_max);
+plot(I1_vec,J2_vec,'.');
 
 
 
