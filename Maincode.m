@@ -164,27 +164,38 @@ end
 
 %% ------------------Plot step time-----------------------------------------
 n = linspace(1,length(step_time),length(step_time));
+n_plast = n(21:end)-n(21);
+p = polyfit(n_plast,step_time(21:end),2);
+time_est = polyval(p,n);
 hold on;
 grid on;
+% plot(n,time_est);
 plot(n,step_time,'*')
 
 %% ------------------ PLOT -------------------------------------------------
     
+ainit = struct2cell(load('initial_state.mat','a'));
+ainit = ainit{1};
+ed_init = extract(edof,ainit);
+
+ed_final = extract(edof,a);
 %Try for displacement code
 figure('Renderer', 'painters', 'Position', [400 100 800 600])
 [ex,ey] = coordxtr(edof,coord,dof,3);
-eldraw2(ex,ey,[1 2 0]); %green
+exd_init = ex + ed_init(:,1:2:end);
+eyd_init = ey + ed_init(:,2:2:end);
+eldraw2(exd_init,eyd_init,[1 2 0]); %green
 %eldraw2(ex,-ey,[1 2 0]);
 % eldraw2(-ex+0.29,ey, [1 2 0]);
 % eldraw2(-ex+0.29,-ey, [1 2 0]);
 
-eldisp2(ex,ey,ed,[1 4 0], 1); %red
+eldisp2(ex,ey,ed_final,[1 4 0], 1); %red
 % eldisp2(ex,-ey,ed,[1 4 0], 1); %red
 % eldisp2(-ex+0.29,ey,-ed,[1 4 0], 1); %red
 % eldisp2(-ex+0.29,-ey,-ed,[1 4 0], 1); %red
 legend('Reference configuration');
 axis equal
-title('Displacement field (m), disp controlled')
+title('Displacement field (m)')
 
 %% Plot von Mises Finished
 vMises = zeros(length(enod),1);   %Von Mises stress
@@ -202,6 +213,7 @@ end
 enodtemp = [(1:length(enod))',enod];
 eff_field = extract(enodtemp,eff_node(:));
 fill(ex', ey', eff_field');
+colormap('jet');
 title('Von Mises effective stressfield [N/m^2]')
 colorbar;
 

@@ -3,7 +3,7 @@ clc
 load('check_alg_tan_stiff.mat')
 
 
-<<<<<<< HEAD
+
 G      = 3e8; %Young modulus, GPa
 nu     = 0.3; %Poisson ratio
 gamma  = 30*pi/180;  %How to intrepet? Which angle? Need to change to radians
@@ -12,7 +12,7 @@ B      = 48.2;
 
 mp     = [G,nu,gamma,A,B];
 K  = 2*(1+v)/(3*(1-2*v))*Gshear;
-=======
+
 mp = [Gshear,v,gamma_i,A,B];
 %K  = 2*(1+v)/(3*(1-2*v))*Gshear;
 >>>>>>> 41b2e5cb0913a7d8ad0aea81b1a194906c376a49
@@ -121,5 +121,3 @@ for ij = 1:3
         %df2ds2(ij,lk)  = 3/(2*sqrt(J2))*(-1/(2*J2)*s(ij)*s(lk)+(delta(i,k)*delta(j,l)-1/3*delta(i,j)*delta(k,l)));    
         df2ds2(ij,lk)  = (3/2)/sqrt(3*J2)*(-(3/2)/(3*J2)*s(ij)*s(lk)+(delta(i,k)*delta(j,l)-1/3*delta(i,j)*delta(k,l)));
     end
-end
->>>>>>> 41b2e5cb0913a7d8ad0aea81b1a194906c376a49
