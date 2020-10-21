@@ -41,7 +41,17 @@ End_load_percent  = 17; %Final load fraction of initial load
 step_size_big = 1; %Big step size percentage of initial load
 step_size_small = 0.1; %Small step size percentage of inital load
 break_percent = 20; %Breakpoint percentage for big step size
+tot_nbr_steps = (Initial_load_percent-break_percent)/step_size_big + (break_percent-End_load_percent)/step_size_small;
 unload    = false;
+
+maxed_element = 375; %Element studied for I1-J2 loadpath
+max_element_stress = zeros(4,tot_nbr_steps);
+max_element_dlambda = zeros(tot_nbr_steps,1);
+max_element_ep_eff = zeros(tot_nbr_steps,1);
+I1_ultimate = 0;
+chad_element = 0;
+
+
 
 % D) Define various iteration quanteties
 %Allocatin memory
@@ -143,6 +153,21 @@ while current_load_percent > End_load_percent
             update_variables(sigma_old(:,el),ep_eff_old,delta_eps',Dstar,mp);
             sigma_old(:,el) = sigma;
             
+%             I1_el = stress_invariant_I1(sigma);
+%             if I1_el < I1_ultimate
+%                I1_ultimate = I1_el;
+%                chad_element = el;
+%                disp(['Chad element is: ', num2str(chad_element)]);
+%                 
+%             end
+            
+            if el==maxed_element
+               max_element_dlambda(step_nbr) = dlambda;
+               max_element_ep_eff(step_nbr) = ep_eff;
+               max_element_stress(:,step_nbr) = sigma_old(:,maxed_element);
+                
+            end
+            
             if dlambda ~= 0
                 plasticitycheck(el) = 1;
             end
@@ -169,6 +194,7 @@ while current_load_percent > End_load_percent
 %             disp(['new Residual: ', num2str(res)])
 %         end
     end
+    
     step_time(step_nbr) = toc;
     step_nbr = step_nbr + 1;
     % Q) Accept and save quantities as an equilibrium state
@@ -250,7 +276,8 @@ end
 enodtemp = [(1:length(enod))',enod];
 eff_field = extract(enodtemp,eff_node(:));
 fill(ex', ey', eff_field');
-title('Volumetric stress field [N/m^2]')
+title('Volumetric stress field [N/m^2]');
+colormap('jet');
 colorbar;
 
 %% Plot radius against force-percent
@@ -285,6 +312,41 @@ eldraw2(ex2,ey2,[1 4 0]); %red
 %legend('Reference configuration');
 %axis equal
 %title('Displacement field (m), disp controlled')
+
+
+%% Plot f-path for most hydrostatically loaded element
+
+%Element 310 upplever mest störst hydrostatisk stress
+% ind = find(I1_vec==min(I1_vec));
+
+I1_vec = zeros(length(max_element_stress),1);
+J2_vec = zeros(length(max_element_stress),1);
+alpha_vec = zeros(length(max_element_stress),1);
+x = linspace(-3.2e7,-2.9e7,1000);
+
+
+for step=1:length(max_element_stress)
+    I1_vec(step) = stress_invariant_I1(max_element_stress(:,step));
+    J2_vec(step)= stress_invariant_J2(max_element_stress(:,step));
+    alpha_vec(step) = alpha_fun(max_element_ep_eff(step),mp);
+end
+
+alpha_init = alpha_vec(1);
+alpha_max = max(alpha_vec);
+alpha_end_index = find(J2_vec);
+alpha_end_index = alpha_end_index(end);
+alpha_end = alpha_vec(alpha_end_index);
+
+alpha_line_init = -alpha_init.*x;
+alpha_line_max = -alpha_max.*x;
+hold on;
+grid on;
+plot(I1_vec(1:75),sqrt(3.*J2_vec(1:75)),'.');
+plot(x,alpha_line_init);
+plot(x,alpha_line_max);
+
+
+
 
 %%
 
