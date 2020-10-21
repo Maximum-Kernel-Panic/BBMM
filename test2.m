@@ -1,4 +1,7 @@
-load('check_update_variables.mat');
+clc 
+clear all
+
+load('check_alg_tan_stiff.mat');
 
 G      = 3e8; %Young modulus, GPa
 nu     = 0.3; %Poisson ratio

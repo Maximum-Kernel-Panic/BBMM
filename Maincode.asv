@@ -254,11 +254,10 @@ title('Volumetric stress field [N/m^2]')
 colorbar;
 
 %% Plot radius against force-percent
-index = find(loadradius);
-plot(loadpercentvec(index),radius(index));
+
+plot(loadpercentvec,radius);
 title('Normalised radius against loadpercent')
-xlabel('Percent of initial force')
-ylabel('Normalised radius r/R0')
+xaxis('Lo
 
 %% Plot plasticity check Finished
 

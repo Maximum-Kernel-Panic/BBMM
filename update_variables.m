@@ -16,10 +16,11 @@ sigkktrial     = sigtrial(1)+sigtrial(2)+sigtrial(3);
 sigkktrialvec  = [sigkktrial,sigkktrial,sigkktrial,0]';
 I1trial        = stress_invariant_I1(sigtrial);
 J2trial        = stress_invariant_J2(sigtrial);
-strial  = sigtrial - 1/3*sigkktrialvec;
-s_2 = @(dl) strial - 3.*dl*G*strial/sqrt(3*J2trial);
-J2_2 = @(dl) 0.5*((e1*s_2(dl))^2 + (e2*s_2(dl))^2 + (e3*s_2(dl))^2 + 2*(e4*s_2(dl))^2);
-I1_2 = @(dl) I1trial - 9*K.*dl * alpha_fun(ep_eff_old+dl,mp);
+strial         = sigtrial - 1/3*sigkktrialvec;
+
+s_2            = @(dl) strial - 3.*dl*G*strial/sqrt(3*J2trial);
+J2_2           = @(dl) 0.5*((e1*s_2(dl))^2 + (e2*s_2(dl))^2 + (e3*s_2(dl))^2 + 2*(e4*s_2(dl))^2);
+I1_2           = @(dl) I1trial - 9*K.*dl * alpha_fun(ep_eff_old+dl,mp);
 
 f = yield(sigtrial,ep_eff_old,mp);
 

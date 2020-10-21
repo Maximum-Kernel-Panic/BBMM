@@ -43,9 +43,6 @@ for ij = 1:4
             l = 1;
             k = 2;
         end
-        %df2ds2(ij,lk) = (2-delta(l,k))/(4*J2)*((delta(i,l)*delta(j,k)+delta(i,k)*delta(j,l)- ... 
-        %    2/3*delta(i,j)*delta(l,k))*sqrt(3*J2)+3*(2-delta(i,j))*s(lk)*s(ij)/sqrt(3*J2));
-        %df2ds2(ij,lk)  = 3/(2*sqrt(J2))*(-1/(2*J2)*s(ij)*s(lk)+(delta(i,k)*delta(j,l)-1/3*delta(i,j)*delta(k,l)));    
         if ij == 4 && lk == 4
             factor = 4; 
             factor1 =2;
@@ -56,14 +53,14 @@ for ij = 1:4
             factor = 1;
             factor1 = 1;
         end
-        df2ds2(ij,lk)  = (3/2)/sqrt(3*J2)*(-(3/2)/(3*J2)*s(ij)*s(lk)*factor+ factor1*(delta(i,l)*delta(j,k)-1/3*delta(i,j)*delta(k,l)));
+        df2ds2(ij,lk)  = (3/2)/sqrt(3*J2)*(-(3/2)/(3*J2)*s(ij)*s(lk)*factor + factor1*(delta(i,l)*delta(j,k)-1/3*delta(i,j)*delta(k,l)));
     end
 end
 
 
 Da      = dKdk;
-% Davec   = inv(inv(Dstar) + dlambda*df2ds2);
-Davec   = 1\(1\Dstar + dlambda*df2ds2);
+%Davec   = inv(inv(Dstar) + dlambda*df2ds2);
+Davec   = eye(4)/((eye(4)/(Dstar) + dlambda*df2ds2));
 dgdsiga = dfds  + dlambda*df2dsdK*Da;
 H       = -dfdK*Da;
 Aa      = dfds'*Davec*dfds+H;
@@ -73,4 +70,5 @@ if dlambda == 0
 else
     Dats       = (Davec - 1/Aa*Davec*dgdsiga*dfds'*Davec);
 end
+
 end
