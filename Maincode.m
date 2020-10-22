@@ -13,7 +13,7 @@ ep     = [ptype t];
 %Material
 G      = 3e8; %Young modulus, GPa
 nu     = 0.3; %Poisson ratio
-gamma  = 30*pi/180;  %How to intrepet? Which angle? Need to change to radians
+gamma  = 35*pi/180;  %How to intrepet? Which angle? Need to change to radians
 A      = 0.0067;
 B      = 48.2;
 
@@ -37,7 +37,7 @@ load initial_state.mat
 tol       = 1e-3;
 
 Initial_load_percent = 100; %Initial load in percent of initial load
-End_load_percent  = 0; %Final load fraction of initial load
+End_load_percent  = 17; %Final load fraction of initial load
 step_size_big = 1; %Big step size percentage of initial load
 step_size_small = 0.1; %Small step size percentage of inital load
 break_percent = 20; %Breakpoint percentage for big step size
