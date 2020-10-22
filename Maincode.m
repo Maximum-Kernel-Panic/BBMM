@@ -37,7 +37,7 @@ load initial_state.mat
 tol       = 1e-3;
 
 Initial_load_percent = 100; %Initial load in percent of initial load
-End_load_percent  = 17; %Final load fraction of initial load
+End_load_percent  = 0; %Final load fraction of initial load
 step_size_big = 1; %Big step size percentage of initial load
 step_size_small = 0.1; %Small step size percentage of inital load
 break_percent = 20; %Breakpoint percentage for big step size
@@ -212,7 +212,7 @@ n_plast = n(21:end)-n(21);
 p = polyfit(n_plast,step_time(21:end),2);
 time_est = polyval(p,n);
 hold on;
-grid on;
+% grid on;
 % plot(n,time_est);
 plot(n,step_time,'*')
 
@@ -340,7 +340,7 @@ alpha_end = alpha_vec(alpha_end_index);
 alpha_line_init = -alpha_init.*x;
 alpha_line_max = -alpha_max.*x;
 hold on;
-grid on;
+% grid on;
 plot(I1_vec(1:75),sqrt(3.*J2_vec(1:75)),'.');
 plot(x,alpha_line_init);
 plot(x,alpha_line_max);
