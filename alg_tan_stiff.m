@@ -59,7 +59,9 @@ end
 
 
 Da      = dKdk;
+
 Davec   = ((Dstar\eye(4) + dlambda*df2ds2))\eye(4);
+
 dgdsiga = dfds  + dlambda*df2dsdK*Da;
 H       = -dfdK*Da;
 Aa      = dfds'*Davec*dfds+H;
