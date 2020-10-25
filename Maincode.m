@@ -13,7 +13,7 @@ ep     = [ptype t];
 %Material
 G      = 3e8; %Young modulus, GPa
 nu     = 0.3; %Poisson ratio
-gamma  = 30*pi/180;  %How to intrepet? Which angle? Need to change to radians
+gamma  = 40*pi/180;  %How to intrepet? Which angle? Need to change to radians
 A      = 0.0067;
 B      = 48.2;
 
@@ -234,6 +234,7 @@ eldraw2(exd_init,eyd_init,[1 2 0]); %green
 % eldraw2(-ex+0.29,-ey, [1 2 0]);
 
 eldisp2(ex,ey,ed_final,[1 4 0], 1); %red
+
 % eldisp2(ex,-ey,ed,[1 4 0], 1); %red
 % eldisp2(-ex+0.29,ey,-ed,[1 4 0], 1); %red
 % eldisp2(-ex+0.29,-ey,-ed,[1 4 0], 1); %red
@@ -256,7 +257,11 @@ for node = 1:nnod
 end
 enodtemp = [(1:length(enod))',enod];
 eff_field = extract(enodtemp,eff_node(:));
+hold on;
 fill(ex', ey', eff_field');
+fill(-ex', ey', eff_field');
+fill(ex', -ey', eff_field');
+fill(-ex', -ey', eff_field');
 colormap('jet');
 title('Von Mises effective stressfield [N/m^2]')
 colorbar;
