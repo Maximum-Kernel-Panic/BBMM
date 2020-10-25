@@ -13,7 +13,8 @@ ep     = [ptype t];
 %Material
 G      = 3e8; %Young modulus, GPa
 nu     = 0.3; %Poisson ratio
-gamma  = 40*pi/180;  %How to intrepet? Which angle? Need to change to radians
+
+gamma  = 35*pi/180;  %How to intrepet? Which angle? Need to change to radians
 A      = 0.0067;
 B      = 48.2;
 
@@ -212,7 +213,7 @@ n_plast = n(21:end)-n(21);
 p = polyfit(n_plast,step_time(21:end),2);
 time_est = polyval(p,n);
 hold on;
-grid on;
+% grid on;
 % plot(n,time_est);
 plot(n,step_time,'*')
 
@@ -345,7 +346,7 @@ alpha_end = alpha_vec(alpha_end_index);
 alpha_line_init = -alpha_init.*x;
 alpha_line_max = -alpha_max.*x;
 hold on;
-grid on;
+% grid on;
 plot(I1_vec(1:75),sqrt(3.*J2_vec(1:75)),'.');
 plot(x,alpha_line_init);
 plot(x,alpha_line_max);

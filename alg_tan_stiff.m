@@ -60,8 +60,9 @@ end
 
 Da      = dKdk;
 
-% Davec   = inv(inv(Dstar) + dlambda*df2ds2);
-Davec   = eye(4)\(eye(4)\Dstar + dlambda*df2ds2);
+
+Davec   = ((Dstar\eye(4) + dlambda*df2ds2))\eye(4);
+
 
 dgdsiga = dfds  + dlambda*df2dsdK*Da;
 H       = -dfdK*Da;
