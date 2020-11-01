@@ -14,7 +14,8 @@ ep     = [ptype t];
 G      = 3e8; %Young modulus, GPa
 nu     = 0.3; %Poisson ratio
 
-gamma  = 35*pi/180;  %How to intrepet? Which angle? Need to change to radians
+gamma  = 30*pi/180;  %How to intrepet? Which angle? Need to change to radians
+
 A      = 0.0067;
 B      = 48.2;
 
@@ -38,9 +39,9 @@ load initial_state.mat
 tol       = 1e-3;
 
 Initial_load_percent = 100; %Initial load in percent of initial load
-End_load_percent  = 17; %Final load fraction of initial load
+End_load_percent  = 0; %Final load fraction of initial load
 step_size_big = 1; %Big step size percentage of initial load
-step_size_small = 0.1; %Small step size percentage of inital load
+step_size_small = 0.25; %Small step size percentage of inital load
 break_percent = 20; %Breakpoint percentage for big step size
 tot_nbr_steps = (Initial_load_percent-break_percent)/step_size_big + (break_percent-End_load_percent)/step_size_small;
 unload    = false;
@@ -62,7 +63,7 @@ eps_his   = zeros(2*length(dof),4);     %Strain history
 eps       = zeros(length(enod),4);           %Current strain
 sigma_old = zeros(4,length(enod));
 plasticitycheck = zeros(1,length(enod));
-%sigma     = zeros(length(enod),4);
+ep_eff    = zeros(1,length(enod));
 
 
 %Choose a loadindex on drill to keep track of radius and loaddata.
@@ -78,8 +79,8 @@ loadradius(1) = sqrt(f(loadx)^2+f(loady)^2);
 radius(1)  = sqrt((coord(loadx,1)+a(loadx))^2+(coord(loadx,2)+a(loady))^2)/R0;
 
 
-ep_eff_old = 0;
-ep_eff     = 0;
+
+%ep_eff     = 0;
 dlambda    = 0;
 % E) Build initial tangent and internal force
 Dstar = elastic_tan_stiff(mp);
@@ -150,8 +151,8 @@ while current_load_percent > End_load_percent
             delta_eps = eps(el,:) - epshistory(el,:);
             
             % L) Update plastic variables, (check for plasticity)
-            [sigma,dlambda,ep_eff] = ...
-            update_variables(sigma_old(:,el),ep_eff_old,delta_eps',Dstar,mp);
+            [sigma,dlambda,ep_eff(el)] = ...
+            update_variables(sigma_old(:,el),ep_eff(el),delta_eps',Dstar,mp);
             sigma_old(:,el) = sigma;
             
 %             I1_el = stress_invariant_I1(sigma);
@@ -164,7 +165,7 @@ while current_load_percent > End_load_percent
             
             if el==maxed_element
                max_element_dlambda(step_nbr) = dlambda;
-               max_element_ep_eff(step_nbr) = ep_eff;
+               max_element_ep_eff(step_nbr) = ep_eff(el);
                max_element_stress(:,step_nbr) = sigma_old(:,maxed_element);
                 
             end
@@ -174,7 +175,7 @@ while current_load_percent > End_load_percent
             end
             
             % M) Compute element algorithmic tangent, D_ats           
-            Dats = alg_tan_stiff(sigma,dlambda,ep_eff,Dstar,mp);
+            Dats = alg_tan_stiff(sigma,dlambda,ep_eff(el),Dstar,mp);
             
             % N) Compute element internal forces and stiffness matrix
             Ke      = plante(ex,ey,ep,Dats);
@@ -239,14 +240,14 @@ eldisp2(ex,ey,ed_final,[1 4 0], 1); %red
 % eldisp2(ex,-ey,ed,[1 4 0], 1); %red
 % eldisp2(-ex+0.29,ey,-ed,[1 4 0], 1); %red
 % eldisp2(-ex+0.29,-ey,-ed,[1 4 0], 1); %red
-legend('Reference configuration');
+
 axis equal
 title('Displacement field (m)')
 
 %% Plot von Mises Finished
 vMises = zeros(length(enod),1);   %Von Mises stress
 for el=1:length(enod)
-    vMises(el) = stress_invariant_J2(sigma_old(:,el));
+    vMises(el) = sqrt(3*stress_invariant_J2(sigma_old(:,el)));
 end
 figure('Renderer', 'painters', 'Position', [400 100 800 600])
 [ex,ey] = coordxtr(edof,coord,dof,3);
@@ -260,14 +261,15 @@ enodtemp = [(1:length(enod))',enod];
 eff_field = extract(enodtemp,eff_node(:));
 hold on;
 fill(ex', ey', eff_field');
-fill(-ex', ey', eff_field');
-fill(ex', -ey', eff_field');
-fill(-ex', -ey', eff_field');
+% fill(-ex', ey', eff_field');
+% fill(ex', -ey', eff_field');
+% fill(-ex', -ey', eff_field');
 colormap('jet');
 title('Von Mises effective stressfield [N/m^2]')
 colorbar;
 
 %% Plot volumetric stress Finished
+%I1plot(el) = zeros(length(enod),1);   %Volumetric stress
 for el=1:length(enod)
     I1plot(el) = stress_invariant_I1(sigma_old(:,el));
 end
@@ -280,9 +282,9 @@ for node = 1:nnod
     eff_node(node,1) = sum(I1plot(c0)/size(c0,1));
 end
 enodtemp = [(1:length(enod))',enod];
-eff_field = extract(enodtemp,eff_node(:));
+eff_field = extract(enodtemp,abs(eff_node(:)));
 fill(ex', ey', eff_field');
-title('Volumetric stress field [N/m^2]');
+title('Volumetric stress field [-N/m^2]');
 colormap('jet');
 colorbar;
 
