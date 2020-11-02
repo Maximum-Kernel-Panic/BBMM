@@ -1,0 +1,26 @@
+function [ev, mult] = heltalsev(A,tol)
+
+
+if nargin < 2
+    tol = 5e-2;
+end
+
+evf = eig(A);
+mult = [];
+evm = [];
+
+for i = 1:length(evf)
+    if abs(round(evf(i))-evf(i)) < tol
+        evm(i) = round(evf(i)); 
+        mult(i) = length(find(abs((evf-evm(i)))<tol));
+    end
+end
+
+ev 
+
+if length(evm) > 1
+   for i = 1:length(evm) 
+       
+   end
+end
+
